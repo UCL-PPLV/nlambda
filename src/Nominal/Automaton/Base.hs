@@ -19,7 +19,26 @@ import GHC.Generics (Generic)
 -- | An automaton with a set of state with type __q__ accepting\/rejecting words from an alphabet with type __a__.
 data Automaton q a = Automaton {states :: Set q, alphabet :: Set a, delta :: Set (q, a, q),
                                 initialStates :: Set q, finalStates :: Set q}
-  deriving (Eq, Ord, Show, Read, Generic, Nominal, Contextual, Conditional)
+  deriving (Eq, Ord, Read, Generic, Nominal, Contextual, Conditional)
+
+instance (Nominal q, Show q, Nominal a, Show a) => Show (Automaton q a) where
+    show (Automaton q a d i f) =
+      "Automaton {\n" ++
+      "  States: {\n" ++
+           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") q) ++
+      "  },\n" ++
+      "  Alphabet: " ++ show a ++ ",\n" ++
+      "  Delta: {\n" ++
+           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") d) ++
+      "  },\n" ++
+      "  Intial States: {\n" ++
+           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") i) ++
+      "  },\n" ++
+      "  Final States: {\n" ++
+           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") f) ++
+      "  }\n" ++
+      "}\n"
+
 
 -- | An automaton constructor.
 automaton :: (Nominal q, Nominal a) => Set q -> Set a -> Set (q, a, q) -> Set q -> Set q -> Automaton q a
