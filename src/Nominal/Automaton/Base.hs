@@ -69,9 +69,9 @@ transitSet :: (Nominal q, Nominal a) => Automaton q a -> Set q -> a -> Set q
 transitSet aut ss = transitFromStates aut (contains ss)
 
 -- | Checks whether an automaton accepts a word.
-accepts :: (Contextual q, Nominal q, Show q, Show a, Nominal a) => Automaton q a -> [a] -> Formula
+accepts :: (Nominal q, Nominal a) => Automaton q a -> [a] -> Formula
 accepts aut s = finalStates aut `intersect` reached
-    where reached = foldl (\q a -> traceShowId . simplify $ transitSet aut q a) (traceShowId $ simplify $ initialStates aut) s
+    where reached = foldl (transitSet aut) (initialStates aut) s
 
 transitionGraph :: (Nominal q, Nominal a) => Automaton q a -> Graph q
 transitionGraph aut = graph (states aut) (map (\(s1, _, s2) -> (s1, s2)) $ delta aut)
