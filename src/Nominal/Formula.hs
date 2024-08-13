@@ -26,9 +26,7 @@ module Nominal.Formula (
 
     -- ** Quantifiers
     existsVar,
-    (∃),
     forAllVars,
-    (∀),
 
     -- ** Formula solving
     isTrue,
@@ -43,14 +41,6 @@ import Nominal.Formula.Constructors
 import Nominal.Formula.Operators
 import Nominal.Variable (Variable)
 import Prelude hiding (and, not, or)
-
--- | Equivalent to 'existsVar'.
-(∃) :: Variable -> Formula -> Formula
-(∃) = existsVar
-
--- | Equivalent to 'forAllVars'.
-(∀) :: Variable -> Formula -> Formula
-(∀) = forAllVars
 
 -- | Returns:
 --

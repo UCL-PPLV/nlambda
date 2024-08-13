@@ -91,7 +91,9 @@ isSupremum,
 isConnected,
 isOpen,
 isClosed,
-isCompact) where
+isCompact,
+-- ** Misc
+showVerbose) where
 
 import Control.Arrow ((***), first)
 import Data.IORef (IORef, readIORef, newIORef, writeIORef)
@@ -134,7 +136,7 @@ import Text.Read (Lexeme(Punc), ReadPrec, (+++), (<++), lexP, readPrec, reset)
 type SetElementCondition = (Set.Set Variable, Formula)
 
 getCondition :: SetElementCondition -> Formula
-getCondition (vs, c) = Set.foldr (∃) c vs
+getCondition (vs, c) = Set.foldr existsVar c vs
 
 sumCondition :: SetElementCondition -> SetElementCondition -> SetElementCondition
 sumCondition (vs1, c1) (vs2, c2) = (Set.union vs1 vs2, c1 \/ c2)
@@ -222,6 +224,15 @@ instance Show a => Show (Set a) where
                                 else spaces Symbols.for ++ intercalate "," (show <$> Set.elems vs) ++ spaces Symbols.inSet ++ Symbols.atoms
                   condition = formula ++ variables
               in show v ++ (if null condition then "" else " " ++ Symbols.valueCondSep ++ condition)
+
+showVerbose s = fmap showSetElement (Map.assocs $ setElements s)
+  where showSetElement (v, (vs, c)) =
+          let formula = if c == true then "" else " " ++ show c
+              variables = if Set.null vs
+                            then ""
+                            else spaces Symbols.for ++ intercalate "," (show <$> Set.elems vs) ++ spaces Symbols.inSet ++ Symbols.atoms
+              condition = formula ++ variables
+          in show v ++ (if null condition then "" else " " ++ Symbols.valueCondSep ++ condition)
 
 readIterVars :: ReadPrec (Set.Set Variable)
 readIterVars = do optional $ string Symbols.valueCondSep

@@ -12,6 +12,8 @@ import Nominal.Variants (variant)
 import Prelude hiding (filter, map, not)
 import GHC.Generics (Generic)
 
+import Debug.Trace
+
 ----------------------------------------------------------------------------------------------------
 -- Definition of automaton
 ----------------------------------------------------------------------------------------------------
@@ -25,17 +27,17 @@ instance (Nominal q, Show q, Nominal a, Show a) => Show (Automaton q a) where
     show (Automaton q a d i f) =
       "Automaton {\n" ++
       "  States: {\n" ++
-           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") q) ++
+           concatMap (\s -> "    " ++ s ++ ",\n") (showVerbose q) ++
       "  },\n" ++
       "  Alphabet: " ++ show a ++ ",\n" ++
       "  Delta: {\n" ++
-           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") d) ++
+           concatMap (\s -> "    " ++ s ++ ",\n") (showVerbose d) ++
       "  },\n" ++
       "  Intial States: {\n" ++
-           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") i) ++
+           concatMap (\s -> "    " ++ s ++ ",\n") (showVerbose i) ++
       "  },\n" ++
       "  Final States: {\n" ++
-           concat (toList $ map (\s -> "    " ++ show s ++ ",\n") f) ++
+           concatMap (\s -> "    " ++ s ++ ",\n") (showVerbose f) ++
       "  }\n" ++
       "}\n"
 
@@ -67,8 +69,9 @@ transitSet :: (Nominal q, Nominal a) => Automaton q a -> Set q -> a -> Set q
 transitSet aut ss = transitFromStates aut (contains ss)
 
 -- | Checks whether an automaton accepts a word.
-accepts :: (Nominal q, Nominal a) => Automaton q a -> [a] -> Formula
-accepts aut = intersect (finalStates aut) . foldl (transitSet aut) (initialStates aut)
+accepts :: (Contextual q, Nominal q, Show q, Show a, Nominal a) => Automaton q a -> [a] -> Formula
+accepts aut s = finalStates aut `intersect` reached
+    where reached = foldl (\q a -> traceShowId . simplify $ transitSet aut q a) (traceShowId $ simplify $ initialStates aut) s
 
 transitionGraph :: (Nominal q, Nominal a) => Automaton q a -> Graph q
 transitionGraph aut = graph (states aut) (map (\(s1, _, s2) -> (s1, s2)) $ delta aut)
