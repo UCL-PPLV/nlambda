@@ -69,6 +69,7 @@ transitSet :: (Nominal q, Nominal a) => Automaton q a -> Set q -> a -> Set q
 transitSet aut ss = transitFromStates aut (contains ss)
 
 -- | Checks whether an automaton accepts a word.
+-- FIXME: I am almost sure there is a bug here. `accepts [a,a] = a != 4 but accepts [0,0] = a₂ = 0 ∧ a₂ ≠ 4`??
 accepts :: (Nominal q, Nominal a) => Automaton q a -> [a] -> Formula
 accepts aut s = finalStates aut `intersect` reached
     where reached = foldl (transitSet aut) (initialStates aut) s
