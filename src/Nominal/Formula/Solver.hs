@@ -354,7 +354,9 @@ parseModelOutput l = do
 
 parseModel :: SmtLogic -> Parser (Map Variable Variable)
 parseModel l = do
-    text "(model"
+    -- output is different in newer Z3 versions.
+    --text "(model"
+    text "("
     spaces
     vs <- parseModelVariable l `sepBy1` spaces
     spaces
