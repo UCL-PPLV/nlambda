@@ -77,8 +77,8 @@ z3Solver :: SmtSolver
 z3Solver = SmtSolver {executable = getExecutable "z3", options = ["-smt2", "-in", "-nw"],
                       smtOptions = ["(set-option :smt.auto-config false)",
                                     "(set-option :smt.mbqi false)",
-                                    "(set-option :pp.min-alias-size 1000000)",
-                                    "(set-option :pp.max-depth 1000000)"]}
+                                    "(set-option :pp.min_alias_size 1000000)",
+                                    "(set-option :pp.max_depth 1000000)"]}
 type SmtScript = Builder
 type SmtResult = L.ByteString
 
@@ -219,7 +219,7 @@ spaces = skipWhile isSpace
 
 parseError :: SmtResult -> [String] -> String -> a
 parseError rest ctx e = error $ unlines ["Fail to parse SMT Solver output:",
-                                        "- not parsed output: " ++ show rest,
+                                        "- not parsed output: " ++ show (L.take 500 rest),
                                         "- list of contexts in which the error occurred: " ++ show ctx,
                                         "- error message: " ++ show e]
 
@@ -354,9 +354,7 @@ parseModelOutput l = do
 
 parseModel :: SmtLogic -> Parser (Map Variable Variable)
 parseModel l = do
-    -- output is different in newer Z3 versions.
-    --text "(model"
-    text "("
+    text "(model"
     spaces
     vs <- parseModelVariable l `sepBy1` spaces
     spaces

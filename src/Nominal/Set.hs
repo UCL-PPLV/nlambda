@@ -129,6 +129,9 @@ import System.IO.Unsafe (unsafePerformIO)
 import Text.ParserCombinators.ReadPrec (pfail)
 import Text.Read (Lexeme(Punc), ReadPrec, (+++), (<++), lexP, readPrec, reset)
 
+import Debug.Trace (trace, traceShow)
+
+
 ----------------------------------------------------------------------------------------------------
 -- Set elements
 ----------------------------------------------------------------------------------------------------
