@@ -37,6 +37,7 @@ Library
     Nominal.Automaton.Base,
     Nominal.Automaton.Deterministic,
     Nominal.Automaton.Nondeterministic,
+    Nominal.Automaton.Mealy,
     Nominal.Conditional,
     Nominal.Contextual,
     Nominal.Either,

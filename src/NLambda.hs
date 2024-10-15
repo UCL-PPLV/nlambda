@@ -19,6 +19,7 @@ import Nominal.Atoms.Space as Export
 import Nominal.Automaton.Base as Export
 import Nominal.Automaton.Deterministic as Export
 import Nominal.Automaton.Nondeterministic as Export
+import Nominal.Automaton.Mealy as Export hiding (transit, transitSet, transitFromStates)
 import Nominal.Conditional as Export
 import Nominal.Contextual as Export
 import Nominal.Either as Export

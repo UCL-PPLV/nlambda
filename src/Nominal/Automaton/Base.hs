@@ -9,7 +9,7 @@ import Nominal.Maybe
 import Nominal.Set
 import Nominal.Type
 import Nominal.Variants (variant)
-import Prelude hiding (filter, map, not)
+import Prelude hiding (filter, map)
 import GHC.Generics (Generic)
 
 import Debug.Trace
@@ -74,6 +74,13 @@ accepts :: (Nominal q, Nominal a) => Automaton q a -> [a] -> Formula
 accepts aut s = finalStates aut `intersect` reached
     where reached = foldl (transitSet aut) (initialStates aut) s
 
+boolAccepts :: (Nominal q, Nominal i) => Automaton q i -> [i] -> Bool
+boolAccepts aut s = if Prelude.not (isTrue accs || isFalse accs)
+    then error "@@@ Error: accepts must be bolean on concrete input! @@@"
+    else isTrue accs
+    where
+        accs = accepts aut s
+
 transitionGraph :: (Nominal q, Nominal a) => Automaton q a -> Graph q
 transitionGraph aut = graph (states aut) (map (\(s1, _, s2) -> (s1, s2)) $ delta aut)
 
@@ -88,7 +95,7 @@ isNotEmptyAutomaton = isNotEmpty . finalStates . onlyReachable
 
 -- | Checks whether an automaton rejects all words.
 isEmptyAutomaton :: (Nominal q, Nominal a) => Automaton q a -> Formula
-isEmptyAutomaton = not . isNotEmptyAutomaton
+isEmptyAutomaton = Nominal.Formula.not . isNotEmptyAutomaton
 
 pairsDelta :: (Nominal q1, Nominal q2, Nominal a) => Set (q1,a,q1) -> Set (q2,a,q2) -> Set ((q1,q2),a,(q1,q2))
 pairsDelta = pairsWithFilter (\(s1,l,s2) (s1',l',s2') -> maybeIf (eq l l') ((s1,s1'),l,(s2,s2')))
