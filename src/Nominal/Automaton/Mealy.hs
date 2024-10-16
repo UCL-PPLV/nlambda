@@ -26,7 +26,7 @@ data Mealy q i o = Mealy {mealyStates :: Set q, initialState :: q, inputAlpha ::
   deriving (Eq, Ord, Read, Generic, Nominal, Contextual, Conditional)
 
 instance (Nominal q, Show q, Nominal i, Show i, Nominal o, Show o) => Show (Mealy q i o) where
-    show (Mealy q i o d s) =
+    show (Mealy q s i o d) =
       "Mealy {\n" ++
       "  States: {\n" ++
            concatMap (\s -> "    " ++ s ++ ",\n") (showVerbose q) ++
