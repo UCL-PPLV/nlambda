@@ -12,7 +12,6 @@ import Nominal.Variants (variant)
 import Prelude hiding (filter, map)
 import GHC.Generics (Generic)
 
-import Debug.Trace
 import Data.Graph (path)
 import Data.List hiding (map, singleton)
 import Data.Maybe (fromJust)
@@ -21,7 +20,6 @@ import Data.Maybe (fromJust)
 -- Definition of Mealy Machine
 ----------------------------------------------------------------------------------------------------
 
--- | An automaton with a set of state with type __q__ accepting\/rejecting words from an alphabet with type __a__.
 data Mealy q i o = Mealy {mealyStates :: Set q, initialState :: q, inputAlpha :: Set i, outputAlpha :: Set o, mealyDelta :: Set (q, i, o, q)}
   deriving (Eq, Ord, Read, Generic, Nominal, Contextual, Conditional)
 
@@ -54,9 +52,9 @@ transit :: (Nominal q, Nominal i, Nominal o) => Mealy q i o -> q -> i -> Set (q,
 transit aut s = transitFromStates aut (eq s)
 
 transitSet :: (Nominal q, Nominal i, Nominal o) => Mealy q i o -> Set q -> i -> Set (q, o)
-transitSet aut ss i = Nominal.Set.sum $ map (\q -> transit aut q i) ss
+transitSet aut ss = transitFromStates aut (contains ss)
 
-output :: (Nominal q, Nominal i, Nominal o) => Mealy q i o -> [i] -> Set o
+output :: (Nominal q, Nominal i, Nominal o, Show q, Show i, Show o) => Mealy q i o -> [i] -> Set o
 output aut [] = empty
 output aut input = outs
     where
